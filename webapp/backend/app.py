@@ -30,5 +30,10 @@ def get_student_skill(student_id, skill_id):
 
     return jsonify(skill_values)
 
+# Sanity checker
+@app.route("/")
+def hello():
+    return "Hello, World!"
+
 if __name__ == '__main__':
     app.run(debug=True)
