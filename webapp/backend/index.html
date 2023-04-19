@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Skill Graph</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .card {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="cards-container"></div>
+    <script>
+        const skillIds = [1, 2, 3];
+        const studentId = 1;
+
+        function fetchData(skillId) {
+            return $.get(`/student/${studentId}/skill/${skillId}`);
+        }
+
+        function createGraphCard(skillId, scores) {
+            const graphId = `graph-${skillId}`;
+            const card = $(`<div class="card"><div id="${graphId}"></div></div>`);
+
+            const trace = {
+                x: scores.map((_, i) => i + 1),
+                y: scores,
+                mode: 'lines',
+                name: `Skill ${skillId}`
+            };
+
+            const layout = {
+                title: `Skill ${skillId}`,
+                xaxis: {title: 'Data Points'},
+                yaxis: {title: 'Score'}
+            };
+
+            Plotly.newPlot(graphId, [trace], layout);
+            return card;
+        }
+
+        $(document).ready(function () {
+            const cardsContainer = $('#cards-container');
+            skillIds.forEach(skillId => {
+                fetchData(skillId).then(scores => {
+                    const card = createGraphCard(skillId, scores);
+                    cardsContainer.append(card);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
