@@ -7,7 +7,7 @@ name: Build and deploy Python app to Azure Web App - backend-student-status
 on:
   push:
     branches:
-      - "*" # TODO set to main later so every branch doesn't stomp
+      - "main" # TODO set to main later so every branch doesn't stomp
   workflow_dispatch:
 
 jobs:
