@@ -3,45 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Skill Graph</title>
+    <title>ABLLS-R Student Summary</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .card {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-    </style>
 </head>
 <body>
-    <h1 id="welcome-message"></h1>
+    <h1 class="page-title">ABLLS-R Student Summary</h1>
+    <h2 id="welcome-message"></h2>
     <label for="student-id-input">Enter Student ID:</label>
-    <input id="student-id-input" min="1" value="1">
+    <input id="student-id-input" type="text" value="V1_100">
     <button id="fetch-data-button">Fetch Data</button>
     <div id="cards-container"></div>
     <script>
-        const skillIds = [1, 2, 3];
+        const skillIds = {
+            A: "Cooperation and Reinforcer Effectiveness",
+            B: "Visual Performance",
+            C: "Receptive Language"
+        };
 
-        function fetchData(studentId, skillId) {
-            return $.get(`/student/${studentId}/skill/${skillId}`);
+        function fetchData(studentId, skillLetter) {
+            return $.get(`/student/${studentId}/skill/${skillLetter}`);
         }
 
-        function createGraphCard(skillId, scores) {
-            const graphId = `graph-${skillId}`;
+        function createGraphCard(skillLetter, skillName, scores) {
+            const graphId = `graph-${skillLetter}`;
             const card = $(`<div class="card"><div id="${graphId}"></div></div>`);
 
             const trace = {
                 x: scores.map((_, i) => i + 1),
                 y: scores,
                 mode: 'lines',
-                name: `Skill ${skillId}`
+                name: skillName
             };
 
             const layout = {
-                title: `Skill ${skillId}`,
+                title: skillName,
                 xaxis: {title: 'Data Points'},
                 yaxis: {title: 'Score'}
             };
@@ -58,23 +56,23 @@
         function updateGraphs(studentId) {
             const cardsContainer = $('#cards-container');
             cardsContainer.empty();
-            skillIds.forEach(skillId => {
-                fetchData(studentId, skillId).then(scores => {
-                    const card = createGraphCard(skillId, scores);
+            for (const [skillLetter, skillName] of Object.entries(skillIds)) {
+                fetchData(studentId, skillLetter).then(scores => {
+                    const card = createGraphCard(skillLetter, skillName, scores);
                     cardsContainer.append(card);
                 });
-            });
+            }
         }
 
         $(document).ready(function () {
             const studentIdInput = $('#student-id-input');
             const fetchDataButton = $('#fetch-data-button');
-            let studentId = parseInt(studentIdInput.val());
+            let studentId = studentIdInput.val();
             updateWelcomeMessage(studentId);
             updateGraphs(studentId);
 
             fetchDataButton.on('click', function () {
-                studentId = parseInt(studentIdInput.val());
+                studentId = studentIdInput.val();
                 updateWelcomeMessage(studentId);
                 updateGraphs(studentId);
             });
