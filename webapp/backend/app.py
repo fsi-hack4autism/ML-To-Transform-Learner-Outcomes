@@ -38,4 +38,5 @@ def hello():
     return "Hello, World!"
 
 if __name__ == '__main__':
+    logging.info("### Welcome to student status backend ###")
     app.run(debug=True)
