@@ -24,7 +24,7 @@
         };
 
         function fetchData(studentId, skillLetter) {
-            return $.get(`/student/${studentId}/skill/${skillLetter}`);
+            return $.get(`https://backend-student-status.azurewebsites.net/student/${studentId}/skill/${skillLetter}`);
         }
 
         function createGraphCard(skillLetter, skillName, scores) {
