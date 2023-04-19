@@ -17,12 +17,15 @@
     </style>
 </head>
 <body>
+    <h1 id="welcome-message"></h1>
+    <label for="student-id-input">Enter Student ID:</label>
+    <input id="student-id-input" min="1" value="1">
+    <button id="fetch-data-button">Fetch Data</button>
     <div id="cards-container"></div>
     <script>
         const skillIds = [1, 2, 3];
-        const studentId = 1;
 
-        function fetchData(skillId) {
+        function fetchData(studentId, skillId) {
             return $.get(`/student/${studentId}/skill/${skillId}`);
         }
 
@@ -47,13 +50,33 @@
             return card;
         }
 
-        $(document).ready(function () {
+        function updateWelcomeMessage(studentId) {
+            const welcomeMessage = $(`#welcome-message`);
+            welcomeMessage.text(`Welcome, Student ${studentId}`);
+        }
+
+        function updateGraphs(studentId) {
             const cardsContainer = $('#cards-container');
+            cardsContainer.empty();
             skillIds.forEach(skillId => {
-                fetchData(skillId).then(scores => {
+                fetchData(studentId, skillId).then(scores => {
                     const card = createGraphCard(skillId, scores);
                     cardsContainer.append(card);
                 });
+            });
+        }
+
+        $(document).ready(function () {
+            const studentIdInput = $('#student-id-input');
+            const fetchDataButton = $('#fetch-data-button');
+            let studentId = parseInt(studentIdInput.val());
+            updateWelcomeMessage(studentId);
+            updateGraphs(studentId);
+
+            fetchDataButton.on('click', function () {
+                studentId = parseInt(studentIdInput.val());
+                updateWelcomeMessage(studentId);
+                updateGraphs(studentId);
             });
         });
     </script>
