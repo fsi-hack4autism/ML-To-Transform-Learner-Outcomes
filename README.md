@@ -36,4 +36,12 @@ Some sample problem statements are provided below that you can adopt as the obje
 
 1. Problem Statement #1 - Identify peer group for a patient to compare progress against
 2. Problem Statement #2 - Determine whether progress is being made based on assessment
-3. Problem Statement #3 - Identify if the patient is in the right program
+3. ~~Problem Statement #3 - Identify if the patient is in the right program~~ Hard as dataset does not have program information.
+
+## Team Summary
+* Druv, Presentation
+* Nohael, ML Expert
+* Anita, QA learning AI
+* Adam Pryce, Project Mgmt, DevOps, and Web Stack
+* Halaa Menasy,	Tech Lead
+* Peter Shand,	Tech Lead
