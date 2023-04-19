@@ -23,11 +23,13 @@ jobs:
           python-version: '3.11'
 
       - name: Create and start virtual environment
+        working-directory: webapp/backend
         run: |
           python -m venv venv
           source venv/bin/activate
       
       - name: Install dependencies
+        working-directory: webapp/backend
         run: pip install -r requirements.txt
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
@@ -37,7 +39,7 @@ jobs:
         with:
           name: python-app
           path: |
-            . 
+            webapp/backend
             !venv/
 
   deploy:
