@@ -47,6 +47,6 @@ Some sample problem statements are provided below that you can adopt as the obje
 * Peter Shand,	Tech Lead
 
 ## Zoom room
-zoom id: 885 589 4024 at 930
+zoom id: 885 589 4024
  
 passcode: 835407

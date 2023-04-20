@@ -17,7 +17,7 @@ with zipfile.ZipFile(zip_filename, 'r') as zf:
 def aggregate_skills(student_data, skill_id):
     skill_columns = [col for col in student_data.columns if col.startswith(skill_id)]
     skill_values = student_data[skill_columns].values.tolist()
-    logging.info("Loaded %s values and the first looks like: %s", skill_values.size, skill_values[0])
+    logging.info("Loaded %s values and the first looks like: %s", len(skill_values), skill_values[0])
     return skill_values
 
 @app.route('/student/<student_id>/skill/<skill_id>')
