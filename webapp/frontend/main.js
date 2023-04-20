@@ -1,7 +1,13 @@
 const skillIds = {
     A: "Cooperation and Reinforcer Effectiveness",
     B: "Visual Performance",
-    C: "Receptive Language"
+    C: "Receptive Language",
+    D: "Motor Imitation",
+    E: "Vocal Imitation (Echoics)",
+    F: "Requests (Mands)",
+    G: "Labeling (Tacts)",
+    H: "Intraverbals",
+    I: "Spontaneous Vocalizations"
 };
 
 const baseUrl = 'https://backend-student-status.azurewebsites.net';
