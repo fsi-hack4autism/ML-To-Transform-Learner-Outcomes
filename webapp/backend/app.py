@@ -25,7 +25,7 @@ def aggregate_skills(student_data, skill_id):
     # Get the row where FirstAssessment_byStudent is 1
     initial_assessment_row = student_data[student_data['FirstAssessment_byStudent'] == 1].iloc[0]
     student_initial_age = initial_assessment_row['StudentAgeAtAssesment']
-    student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%m-%d-%Y')
+    student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%m/%d/%Y')
 
     # Calculate student_age for each row based on assessmentDate
     student_ages = []
