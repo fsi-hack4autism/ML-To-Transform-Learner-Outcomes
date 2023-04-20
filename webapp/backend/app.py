@@ -22,7 +22,7 @@ def aggregate_skills(student_data, skill_id):
     logging.info("Loaded %s values and the first looks like: %s", len(skill_values), skill_values[0])
     return skill_values
 
-@app.route('/student/<student_id>/skill/<skill_id>')
+@app.route('/student/<string:student_id>/skill/<string:skill_id>')
 def get_student_skill(student_id, skill_id):
     student_data = data[data['StudentId'] == student_id]
     if student_data.empty:
@@ -35,7 +35,24 @@ def get_student_skill(student_id, skill_id):
 
     return jsonify(skill_values)
 
-# Sanity checker
+@app.route('/average_skill/<string:skill_id>', methods=['GET'])
+def get_average_skill(skill_id):
+    unique_students = student_data['student_id'].unique()
+    num_students = len(unique_students)
+    average_skill_values = []
+
+    for student_id in unique_students:
+        student_skill_data = student_data[student_data['student_id'] == student_id]
+        student_skill_values = aggregate_skills(student_skill_data, skill_id)
+        average_student_skill_value = sum(student_skill_values) / num_students
+        average_skill_values.append(average_student_skill_value)
+
+    if not average_skill_values:
+        return jsonify({"error": "Skill not found"}), 404
+
+    return jsonify(average_skill_values)
+
+# Sanity checker and health check
 @app.route("/hello")
 def hello():
     return "Hello, World!"
