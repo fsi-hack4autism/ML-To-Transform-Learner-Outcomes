@@ -23,26 +23,22 @@ function createGraphCard(skillLetter, skillName) {
     const card = $(`<div class="card"><h4>${skillName}</h4><div id="${graphId}"></div></div>`);
     return {card, graphId};
 }
-
-async function fetchAndUpdateData(studentId, skillLetter, graphId) {
+async function fetchAndUpdateStudentData(studentId, skillLetter, graphId) {
     const studentData = await $.get(`${baseUrl}/student/${studentId}/skill/${skillLetter}`);
-    const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
-    updateGraph(graphId, studentData, averageData);
+    updateGraph(graphId, studentData, 'Student');
 }
 
-function updateGraph(graphId, studentScores, averageScores) {
-    const studentTrace = {
-        x: studentScores.map(scoreObj => scoreObj.student_age),
-        y: studentScores.map(scoreObj => scoreObj.skill_value),
-        mode: 'lines',
-        name: 'Student'
-    };
+async function fetchAndUpdateAverageData(skillLetter, graphId) {
+    const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
+    updateGraph(graphId, averageData, 'Average');
+}
 
-    const averageTrace = {
-        x: averageScores.map(scoreObj => scoreObj.student_age),
-        y: averageScores.map(scoreObj => scoreObj.skill_value),
+function updateGraph(graphId, scores, traceName) {
+    const trace = {
+        x: scores.map(scoreObj => scoreObj.student_age),
+        y: scores.map(scoreObj => scoreObj.skill_value),
         mode: 'lines',
-        name: 'Average'
+        name: traceName
     };
 
     const layout = {
@@ -51,7 +47,8 @@ function updateGraph(graphId, studentScores, averageScores) {
     };
 
     if (typeof Plotly !== 'undefined') {
-        Plotly.newPlot(graphId, [studentTrace, averageTrace], layout);
+        Plotly.addTraces(graphId, trace);
+        Plotly.update(graphId, {}, layout);
     } else {
         console.error("Plotly is not loaded.");
     }
@@ -64,7 +61,8 @@ async function updateGraphs(studentId) {
     for (const [skillLetter, skillName] of Object.entries(skillIds)) {
         const {card, graphId} = createGraphCard(skillLetter, skillName);
         cardsContainer.append(card);
-        fetchAndUpdateData(studentId, skillLetter, graphId);
+        fetchAndUpdateStudentData(studentId, skillLetter, graphId);
+        fetchAndUpdateAverageData(skillLetter, graphId);
     }
 }
 
