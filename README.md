@@ -34,7 +34,7 @@ A brief description of what this project does and who it's for
 
 Some sample problem statements are provided below that you can adopt as the objective of your ML model. However, you are free to create a new problem statement that you believe the data in joinedData_assessmentStudentAssessor3_clean Anonymized.csv can solve
 
-1. Problem Statement #1 - Identify peer group for a patient to compare progress against
+1. Problem Statement #1 - Identify peer group for a patient to compare progress against and the most important features in the dataset
 2. Problem Statement #2 - Determine whether progress is being made based on assessment
 3. ~~Problem Statement #3 - Identify if the patient is in the right program~~ Hard as dataset does not have program information.
 
@@ -43,7 +43,7 @@ https://jolly-desert-01b5c5610.3.azurestaticapps.net/
 
 ## Team Summary
 * Druv, Presentation
-* Nohael, ML Expert
+* Noha Elprince, ML Expert
 * Anita, QA learning AI
 * Adam Pryce, Project Mgmt, DevOps, and Web Stack
 * Halaa Menasy,	Tech Lead
