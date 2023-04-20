@@ -38,24 +38,28 @@ def get_student_skill(student_id, skill_id):
 @app.route('/average_skill/<string:skill_id>', methods=['GET'])
 def get_average_skill(skill_id):
     unique_students = data['StudentId'].unique()
-    num_students = len(unique_students)
-    skill_sums = None
+    skill_sums = {}
+    skill_counts = {}
 
     for student_id in unique_students:
         student_data = data[data['StudentId'] == student_id]
         student_skill_values = aggregate_skills(student_data, skill_id)
 
-        if skill_sums is None:
-            skill_sums = [0] * len(student_skill_values)
+        for i, skill_value in enumerate(student_skill_values):
+            if i not in skill_sums:
+                skill_sums[i] = 0
+                skill_counts[i] = 0
 
-        skill_sums = [skill_sums[i] + student_skill_values[i] for i in range(len(student_skill_values))]
+            skill_sums[i] += skill_value
+            skill_counts[i] += 1
 
-    if skill_sums is None:
+    if not skill_sums:
         return jsonify({"error": "Skill not found"}), 404
 
-    average_skill_values = [sum_value / num_students for sum_value in skill_sums]
+    average_skill_values = [skill_sums[i] / skill_counts[i] for i in skill_sums]
 
     return jsonify(average_skill_values)
+
 
 
 # Sanity checker and health check
