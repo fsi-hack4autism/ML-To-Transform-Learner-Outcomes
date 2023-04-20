@@ -14,6 +14,9 @@ function createGraphCard(skillLetter, skillName, scores) {
     const graphId = `graph-${skillLetter}`;
     const card = $(`<div class="card"><div id="${graphId}"></div></div>`);
 
+    const cardsContainer = $('#cards-container');
+    cardsContainer.append(card);
+
     const trace = {
         x: scores.map((_, i) => i + 1),
         y: scores,
@@ -27,7 +30,12 @@ function createGraphCard(skillLetter, skillName, scores) {
         yaxis: {title: 'Score'}
     };
 
-    Plotly.newPlot(graphId, [trace], layout);
+    if (typeof Plotly !== 'undefined') {
+        Plotly.newPlot(graphId, [trace], layout);
+    } else {
+        console.error("Plotly is not loaded.");
+    }
+
     return card;
 }
 
