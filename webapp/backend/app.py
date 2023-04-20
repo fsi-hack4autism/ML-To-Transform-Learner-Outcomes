@@ -12,7 +12,7 @@ app = Flask(__name__)
 # Unzip and load the dataset
 zip_filename = 'joinedData_assessmentStudentAssessor3_clean Anonymized.zip'
 csv_filename = 'joinedData_assessmentStudentAssessor3_clean Anonymized.csv'
-default_age_bump_between_tests = .25
+default_age_bump_between_tests = .01
 
 with zipfile.ZipFile(zip_filename, 'r') as zf:
     with zf.open(csv_filename) as f:
@@ -20,7 +20,7 @@ with zipfile.ZipFile(zip_filename, 'r') as zf:
         
 def aggregate_skills(student_data, skill_id):
     # Sort student_data by AssessmentId
-    student_data = student_data.sort_values(by='AssessmentId')
+    student_data = student_data.sort_values(by='assessmentDate')
 
     pattern = re.compile(f"^{skill_id}\d{{0,3}}$")
     skill_columns = [col for col in student_data.columns if pattern.match(col)]
