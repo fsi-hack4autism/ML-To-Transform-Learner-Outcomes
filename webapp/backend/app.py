@@ -104,7 +104,7 @@ def get_average_skill(skill_id):
         return jsonify({"error": "Skill not found"}), 404
 
     # Calculate the best fit line's slope and intercept
-    slope, intercept = np.polyfit(all_student_ages, all_skill_values, 1)
+    slope, intercept = np.polyfit(all_student_ages, all_skill_values, 0)
 
     # Store the calculated slope and intercept in cache
     skill_average_cache[skill_id] = {"slope": slope, "intercept": intercept}
