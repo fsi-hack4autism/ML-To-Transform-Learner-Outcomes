@@ -4,8 +4,10 @@ const skillIds = {
     C: "Receptive Language"
 };
 
+const baseUrl = 'https://backend-student-status.azurewebsites.net';
+
 function fetchData(studentId, skillLetter) {
-    return $.get(`/student/${studentId}/skill/${skillLetter}`);
+    return $.get(`${baseUrl}/student/${studentId}/skill/${skillLetter}`);
 }
 
 function createGraphCard(skillLetter, skillName, scores) {
