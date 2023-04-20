@@ -13,59 +13,69 @@ const skillIds = {
 };
 
 const baseUrl = 'https://backend-student-status.azurewebsites.net';
-async function fetchData(studentId, skillLetter) {
-    const studentData = await $.get(`${baseUrl}/student/${studentId}/skill/${skillLetter}`);
-    const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
-    return {studentData, averageData};
-}
 
-function createGraphCard(skillLetter, skillName, studentScores, averageScores) {
+function createGraphCard(skillLetter, skillName, cardsContainer) {
     const graphId = `graph-${skillLetter}`;
-    const card = $(`<div class="card"><div id="${graphId}"></div></div>`);
+    const card = $(`<div class="card"><h4>${skillName}</h4><div id="${graphId}"></div></div>`);
 
-    const cardsContainer = $('#cards-container');
     cardsContainer.append(card);
 
-    const studentTrace = {
-        x: studentScores.map((_, i) => i + 1),
-        y: studentScores,
-        mode: 'lines',
-        name: 'Student'
-    };
-
-    const averageTrace = {
-        x: averageScores.map((_, i) => i + 1),
-        y: averageScores,
-        mode: 'lines',
-        name: 'Average'
-    };
-
     const layout = {
-        title: skillName,
-        xaxis: {title: 'Data Points'},
+        width: 500,
+        xaxis: {title: 'Student Age'},
         yaxis: {title: 'Score'}
     };
 
     if (typeof Plotly !== 'undefined') {
-        Plotly.newPlot(graphId, [studentTrace, averageTrace], layout);
+        Plotly.newPlot(graphId, [], layout);
     } else {
         console.error("Plotly is not loaded.");
     }
 
-    return card;
+    return graphId;
+}
+
+async function fetchAndUpdateStudentData(studentId, skillLetter, graphId) {
+    const studentData = await $.get(`${baseUrl}/student/${studentId}/skill/${skillLetter}`);
+    updateGraph(graphId, studentData, 'Student');
+}
+
+async function fetchAndUpdateAverageData(skillLetter, graphId) {
+    // const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
+    // updateGraph(graphId, averageData, 'Average');
+}
+
+function updateGraph(graphId, scores, traceName) {
+    const trace = {
+        x: scores.map(scoreObj => scoreObj.student_age),
+        y: scores.map(scoreObj => scoreObj.skill_value),
+        mode: 'lines',
+        name: traceName
+    };
+
+    const layout = {
+        width: 500,
+        xaxis: {title: 'Student Age'},
+        yaxis: {title: 'Score'}
+    };
+
+    if (typeof Plotly !== 'undefined') {
+        Plotly.addTraces(graphId, trace);
+        Plotly.update(graphId, {}, layout);
+    } else {
+        console.error("Plotly is not loaded.");
+    }
 }
 
 async function updateGraphs(studentId) {
     const cardsContainer = $('#cards-container');
     cardsContainer.empty();
 
-    const skillPromises = Object.entries(skillIds).map(async ([skillLetter, skillName]) => {
-        const {studentData, averageData} = await fetchData(studentId, skillLetter);
-        return createGraphCard(skillLetter, skillName, studentData, averageData);
-    });
-
-    const cards = await Promise.all(skillPromises);
-    cards.forEach(card => cardsContainer.append(card));
+    for (const [skillLetter, skillName] of Object.entries(skillIds)) {
+        const graphId = createGraphCard(skillLetter, skillName, cardsContainer);
+        fetchAndUpdateStudentData(studentId, skillLetter, graphId);
+        fetchAndUpdateAverageData(skillLetter, graphId);
+    }
 }
 
 function updateWelcomeMessage(studentId) {
