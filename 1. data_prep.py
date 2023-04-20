@@ -12,11 +12,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-# To scale the data using z-score 
-from sklearn.preprocessing import StandardScaler
-# Importing PCA and t-SNE
-from sklearn.decomposition import PCA
-from sklearn.manifold import TSNE
+
 
 # configure display options
 pd.set_option("display.max_columns", None)  # show all columns
@@ -24,7 +20,7 @@ pd.set_option("display.max_rows", None)  # show all rows
 pd.set_option("display.width", None)  # auto-adjust width
 #%%
 # ### Load data
-data = pd.read_csv('./data/joinedData_assessmentStudentAssessor3_clean Anonymized.csv')
+data = pd.read_csv('../data/joinedData_assessmentStudentAssessor3_clean Anonymized.csv')
 df = data.copy() 
 df.head()
 
@@ -133,7 +129,8 @@ df.describe()
 list(df.columns)
 
 #%%
-# check correlation among features
-df.corr()
+# Save file
+df.to_csv('./out/prep_data.csv')
+
 
 

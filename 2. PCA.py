@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 # To scale the data using z-score 
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 # Importing PCA and t-SNE
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -19,6 +19,8 @@ pd.set_option("display.width", None)  # auto-adjust width
 # loading the data
 df = pd.read_csv('../out/prep_data.csv') # (23354, 553)
 df.shape
+#%%
+list(df.columns)
 # %%
 # summary stat
 df.describe().T
@@ -31,7 +33,6 @@ df_scaled = scaler.fit_transform(df)
 df_scaled = pd.DataFrame(df_scaled, columns=df.columns)
 df_scaled.head()
 # %%
-# PCA
 # Defining the number of principal components to generate
 n = df_scaled.shape[1]
 
@@ -47,11 +48,12 @@ sum = 0
 for ix, i in enumerate(exp_var1):
     
     sum = sum + i
-    if(sum>=0.70):
-        print("Number of PCs that explain at least 70% variance: ", ix + 1)
+    if(sum>=0.60):
+        print("Number of PCs that explain at least 60% variance: ", ix + 1)
         break
 
 # results: Number of PCs that explain at least 60% variance:  30
+# Number of PCs that explain at least 60% variance:  9
 #%%
 # Making a new dataframe with first 5 principal components as columns and original features as indices
 cols = []
@@ -69,7 +71,7 @@ pc1.to_csv('../out/pca_loadings.csv')
 # You should normalize your data before running PCA
 
 # Create a PCA object with the number of components you want to extract
-pca = PCA(n_components=30)
+pca = PCA(n_components=n_pca_components)
 
 # Fit the PCA model to your data
 pca.fit(df_scaled)
@@ -97,14 +99,22 @@ for i, component in enumerate(indices):
 features =  list(set([element for sublist in features_sel for element in sublist]))
 features
 #%%
-len(features)
+len(features) # 48
 # %%
 # store selected features
 features.append('StudentId')
+features.append('AssessmentDurationInSeconds')
+features.append('Log[DurationAssessment]')
 features.append('assessment_recency_in_days')
 features.append('FirstAssessment_byStudent')
+features.append('female_ind')
+features.append('male_ind')
+#%%
 df.reset_index()[features].to_csv('../out/data_features_eng.csv', index=False)
+#%%
 
 # %%
 features
+# %%
+len(features)
 # %%
