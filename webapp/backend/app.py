@@ -47,8 +47,9 @@ def aggregate_skills(student_data, skill_id):
                     adjusted_age = student_ages[-1] + default_age_bump_between_tests
                 else:
                     adjusted_age = student_initial_age
-                student_ages.append(adjusted_age)
-                filtered_skill_values.append(skill_values[i])
+                if not pd.isna(adjusted_age):
+                    student_ages.append(adjusted_age)
+                    filtered_skill_values.append(skill_values[i])
                 continue
 
         days_difference = (date_obj - student_initial_assessment_date).days
