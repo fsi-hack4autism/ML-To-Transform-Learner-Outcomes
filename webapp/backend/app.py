@@ -32,8 +32,10 @@ def aggregate_skills(student_data, skill_id):
     try:
         student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%m/%d/%Y')
     except (ValueError, TypeError):
-        student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%Y-%m-%d')
-
+        try:
+            student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%Y-%m-%d')
+        except (ValueError, TypeError):
+            return [] # We cannot get a good starting assessment for this student, so return empty
 
     # Calculate student_age for each row based on assessmentDate
     student_ages = []
