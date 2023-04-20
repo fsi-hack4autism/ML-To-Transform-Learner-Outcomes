@@ -17,8 +17,21 @@ const baseUrl = 'https://backend-student-status.azurewebsites.net';
 function createGraphCard(skillLetter, skillName) {
     const graphId = `graph-${skillLetter}`;
     const card = $(`<div class="card"><h4>${skillName}</h4><div id="${graphId}"></div></div>`);
+
+    const layout = {
+        xaxis: {title: 'Student Age'},
+        yaxis: {title: 'Score'}
+    };
+
+    if (typeof Plotly !== 'undefined') {
+        Plotly.newPlot(graphId, [], layout);
+    } else {
+        console.error("Plotly is not loaded.");
+    }
+
     return {card, graphId};
 }
+
 async function fetchAndUpdateStudentData(studentId, skillLetter, graphId) {
     const studentData = await $.get(`${baseUrl}/student/${studentId}/skill/${skillLetter}`);
     updateGraph(graphId, studentData, 'Student');
