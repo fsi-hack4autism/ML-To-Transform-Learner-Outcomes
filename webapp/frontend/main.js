@@ -18,14 +18,19 @@ async function fetchData(studentId, skillLetter) {
     const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
     return {studentData, averageData};
 }
-
-function createGraphCard(skillLetter, skillName, studentScores, averageScores) {
+function createGraphCard(skillLetter, skillName) {
     const graphId = `graph-${skillLetter}`;
-    const card = $(`<div class="card"><div id="${graphId}"></div></div>`);
+    const card = $(`<div class="card"><h4>${skillName}</h4><div id="${graphId}"></div></div>`);
+    return {card, graphId};
+}
 
-    const cardsContainer = $('#cards-container');
-    cardsContainer.append(card);
+async function fetchAndUpdateData(studentId, skillLetter, graphId) {
+    const studentData = await $.get(`${baseUrl}/student/${studentId}/skill/${skillLetter}`);
+    const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
+    updateGraph(graphId, studentData, averageData);
+}
 
+function updateGraph(graphId, studentScores, averageScores) {
     const studentTrace = {
         x: studentScores.map(scoreObj => scoreObj.student_age),
         y: studentScores.map(scoreObj => scoreObj.skill_value),
@@ -41,7 +46,6 @@ function createGraphCard(skillLetter, skillName, studentScores, averageScores) {
     };
 
     const layout = {
-        title: skillName,
         xaxis: {title: 'Student Age'},
         yaxis: {title: 'Score'}
     };
@@ -51,21 +55,17 @@ function createGraphCard(skillLetter, skillName, studentScores, averageScores) {
     } else {
         console.error("Plotly is not loaded.");
     }
-
-    return card;
 }
 
 async function updateGraphs(studentId) {
     const cardsContainer = $('#cards-container');
     cardsContainer.empty();
 
-    const skillPromises = Object.entries(skillIds).map(async ([skillLetter, skillName]) => {
-        const {studentData, averageData} = await fetchData(studentId, skillLetter);
-        return createGraphCard(skillLetter, skillName, studentData, averageData);
-    });
-
-    const cards = await Promise.all(skillPromises);
-    cards.forEach(card => cardsContainer.append(card));
+    for (const [skillLetter, skillName] of Object.entries(skillIds)) {
+        const {card, graphId} = createGraphCard(skillLetter, skillName);
+        cardsContainer.append(card);
+        fetchAndUpdateData(studentId, skillLetter, graphId);
+    }
 }
 
 function updateWelcomeMessage(studentId) {
