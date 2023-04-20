@@ -27,22 +27,22 @@ function createGraphCard(skillLetter, skillName, studentScores, averageScores) {
     cardsContainer.append(card);
 
     const studentTrace = {
-        x: studentScores.map((_, i) => i + 1),
-        y: studentScores,
+        x: studentScores.map(scoreObj => scoreObj.student_age),
+        y: studentScores.map(scoreObj => scoreObj.skill_value),
         mode: 'lines',
         name: 'Student'
     };
 
     const averageTrace = {
-        x: averageScores.map((_, i) => i + 1),
-        y: averageScores,
+        x: averageScores.map(scoreObj => scoreObj.student_age),
+        y: averageScores.map(scoreObj => scoreObj.skill_value),
         mode: 'lines',
         name: 'Average'
     };
 
     const layout = {
         title: skillName,
-        xaxis: {title: 'Data Points'},
+        xaxis: {title: 'Student Age'},
         yaxis: {title: 'Score'}
     };
 
