@@ -37,13 +37,13 @@ def get_student_skill(student_id, skill_id):
 
 @app.route('/average_skill/<string:skill_id>', methods=['GET'])
 def get_average_skill(skill_id):
-    unique_students = student_data['student_id'].unique()
+    unique_students = data['StudentId'].unique()
     num_students = len(unique_students)
     average_skill_values = []
 
     for student_id in unique_students:
-        student_skill_data = student_data[student_data['student_id'] == student_id]
-        student_skill_values = aggregate_skills(student_skill_data, skill_id)
+        student_data = data[data['StudentId'] == student_id]
+        student_skill_values = aggregate_skills(student_data, skill_id)
         average_student_skill_value = sum(student_skill_values) / num_students
         average_skill_values.append(average_student_skill_value)
 
