@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABLLS-R Student Summary</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.plot.ly/plotly-2.20.0.min.js" charset="utf-8"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1 class="page-title">ABLLS-R Student Summary</h1>
+    <div class="content-wrapper">
+        <h2 id="welcome-message"></h2>
+        <div class="form-container">
+            <label for="student-id-input">Enter Student ID:</label>
+            <input id="student-id-input" type="text" value="V1_1000">
+            <button id="fetch-data-button">Fetch Data</button>
+        </div>
+        <div id="cards-container"></div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
