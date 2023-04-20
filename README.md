@@ -42,10 +42,13 @@ Some sample problem statements are provided below that you can adopt as the obje
 https://jolly-desert-01b5c5610.3.azurestaticapps.net/
 
 ## Team Summary
-* Druv, Presentation
-* Nohael, ML Expert
-* Anita, QA learning AI
-* Adam Pryce, Project Mgmt, DevOps, and Web Stack
+* Dhruv BHatnagar, Presentation
+* Rishi Bhatnagar, Presentation
+* Nohael Elprince, Machine Learning Expert
+* Olive Kingsley, Data Scientist
+* Anita Mohanani, QA learning AI
+* Ryan Carpenter, Jack of all trades!
+* Adam Pryce, DevOps, and Web Stack
 * Halaa Menasy,	Tech Lead
 * Peter Shand,	Tech Lead
 * Hanen Bondka, Shyam Sundar, Parvesh Mamgain -  Data Munging
