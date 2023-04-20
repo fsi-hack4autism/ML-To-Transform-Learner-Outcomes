@@ -27,13 +27,11 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          ls -l | wc -l
       
       - name: Install dependencies
         working-directory: webapp/backend
         run: |
           pip install -r requirements.txt
-          ls -l | wc -l
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       
@@ -42,7 +40,7 @@ jobs:
         with:
           name: python-app
           path: |
-            webapp/backend/*
+            webapp/backend/
             joinedData_assessmentStudentAssessor3_clean Anonymized.zip
             !webapp/backend/venv/
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
@@ -60,11 +58,9 @@ jobs:
         with:
           name: python-app
           path: .
-      - name: Sanity check deployment
+      - name: Bring the app to the root
         run: |
-          ls /
-          pwd
-          ls
+          mv webapp/backend/* .
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
