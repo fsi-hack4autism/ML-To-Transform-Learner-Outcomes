@@ -30,7 +30,7 @@ def aggregate_skills(student_data, skill_id):
     # Calculate student_age for each row based on assessmentDate
     student_ages = []
     for assessment_date in student_data['assessmentDate']:
-        date_obj = datetime.strptime(assessment_date, '%Y-%m-%d')
+        date_obj = datetime.strptime(assessment_date, '%m/%d/%Y')
         days_difference = (date_obj - student_initial_assessment_date).days
         adjusted_age = student_initial_age + (days_difference / 365.25)
         student_ages.append(adjusted_age)
