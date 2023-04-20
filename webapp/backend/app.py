@@ -16,7 +16,7 @@ csv_filename = 'joinedData_assessmentStudentAssessor3_clean Anonymized.csv'
 with zipfile.ZipFile(zip_filename, 'r') as zf:
     with zf.open(csv_filename) as f:
         data = pd.read_csv(f)
-
+        
 def aggregate_skills(student_data, skill_id):
     pattern = re.compile(f"^{skill_id}\d{{0,3}}$")
     skill_columns = [col for col in student_data.columns if pattern.match(col)]
@@ -25,12 +25,32 @@ def aggregate_skills(student_data, skill_id):
     # Get the row where FirstAssessment_byStudent is 1
     initial_assessment_row = student_data[student_data['FirstAssessment_byStudent'] == 1].iloc[0]
     student_initial_age = initial_assessment_row['StudentAgeAtAssesment']
-    student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%m/%d/%Y')
+    
+    try:
+        student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%m/%d/%Y')
+    except ValueError:
+        student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%Y-%m-%d')
+
+    # Sort student_data by AssessmentId
+    student_data = student_data.sort_values(by='AssessmentId')
 
     # Calculate student_age for each row based on assessmentDate
     student_ages = []
     for assessment_date in student_data['assessmentDate']:
-        date_obj = datetime.strptime(assessment_date, '%m/%d/%Y')
+        try:
+            date_obj = datetime.strptime(assessment_date, '%m/%d/%Y')
+        except ValueError:
+            try:
+                date_obj = datetime.strptime(assessment_date, '%Y-%m-%d')
+            except ValueError:
+                # If the date is not parseable, take the previous student_age and add .1
+                if student_ages:
+                    adjusted_age = student_ages[-1] + 0.1
+                else:
+                    adjusted_age = student_initial_age
+                student_ages.append(adjusted_age)
+                continue
+
         days_difference = (date_obj - student_initial_assessment_date).days
         adjusted_age = student_initial_age + (days_difference / 365.25)
         student_ages.append(adjusted_age)
