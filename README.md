@@ -40,7 +40,7 @@ Some sample problem statements are provided below that you can adopt as the obje
 
 ## Team Summary
 * Druv, Presentation
-* Nohael, ML Expert
+* Noha Elprince, ML Expert
 * Anita, QA learning AI
 * Adam Pryce, Project Mgmt, DevOps, and Web Stack
 * Halaa Menasy,	Tech Lead
