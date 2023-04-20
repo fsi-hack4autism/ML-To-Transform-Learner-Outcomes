@@ -45,3 +45,8 @@ Some sample problem statements are provided below that you can adopt as the obje
 * Adam Pryce, Project Mgmt, DevOps, and Web Stack
 * Halaa Menasy,	Tech Lead
 * Peter Shand,	Tech Lead
+
+## Zoom room
+zoom id: 885 589 4024 at 930
+ 
+passcode: 835407

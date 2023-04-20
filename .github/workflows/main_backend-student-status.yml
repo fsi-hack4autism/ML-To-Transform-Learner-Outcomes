@@ -57,7 +57,11 @@ jobs:
         with:
           name: python-app
           path: .
-          
+      - name: Sanity check deployment
+        run: |
+          ls /
+          pwd
+          ls
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
