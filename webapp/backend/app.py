@@ -81,6 +81,7 @@ def get_student_skill(student_id, skill_id):
 skill_average_cache = {}
 
 import numpy as np
+from scipy.stats import linregress
 
 @app.route('/average_skill/<string:skill_id>', methods=['GET'])
 def get_average_skill(skill_id):
@@ -103,16 +104,13 @@ def get_average_skill(skill_id):
     if not all_skill_values:
         return jsonify({"error": "Skill not found"}), 404
 
-    # Calculate the best fit line's slope and intercept
-    slope, intercept = np.polyfit(all_student_ages, all_skill_values, 0)
+    # Calculate the best fit line's slope, intercept, and other values
+    slope, intercept, r_value, p_value, std_err = linregress(all_student_ages, all_skill_values)
 
-    # Store the calculated slope and intercept in cache
-    skill_average_cache[skill_id] = {"slope": slope, "intercept": intercept}
+    # Store the calculated slope, intercept, and other values in cache
+    skill_average_cache[skill_id] = {"slope": slope, "intercept": intercept, "r_value": r_value, "p_value": p_value, "std_err": std_err}
 
     return jsonify(skill_average_cache[skill_id])
-
-
-
 
 # Sanity checker and health check
 @app.route("/hello")
