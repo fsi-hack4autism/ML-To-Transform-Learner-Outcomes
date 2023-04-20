@@ -17,28 +17,25 @@ default_age_bump_between_tests = .01
 with zipfile.ZipFile(zip_filename, 'r') as zf:
     with zf.open(csv_filename) as f:
         data = pd.read_csv(f)
-        
+
 def aggregate_skills(student_data, skill_id):
-    # Sort student_data by AssessmentId
-    student_data = student_data.sort_values(by='assessmentDate')
+    default_age_bump_between_tests = 0.1
 
     pattern = re.compile(f"^{skill_id}\d{{0,3}}$")
     skill_columns = [col for col in student_data.columns if pattern.match(col)]
     skill_values = student_data[skill_columns].sum(axis=1).tolist()
 
-    # Get the row where FirstAssessment_byStudent is 1
     initial_assessment_row = student_data[student_data['FirstAssessment_byStudent'] == 1].iloc[0]
     student_initial_age = initial_assessment_row['StudentAgeAtAssesment']
-    
+
     try:
         student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%m/%d/%Y')
     except (ValueError, TypeError):
         try:
             student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%Y-%m-%d')
         except (ValueError, TypeError):
-            return [] # We cannot get a good starting assessment for this student, so return empty
+            return []
 
-    # Calculate student_age for each row based on assessmentDate
     student_ages = []
     for assessment_date in student_data['assessmentDate']:
         try:
@@ -47,7 +44,6 @@ def aggregate_skills(student_data, skill_id):
             try:
                 date_obj = datetime.strptime(assessment_date, '%Y-%m-%d')
             except (ValueError, TypeError):
-                # If the date is not parseable, take the previous student_age and add .1
                 if student_ages:
                     adjusted_age = student_ages[-1] + default_age_bump_between_tests
                 else:
@@ -57,11 +53,15 @@ def aggregate_skills(student_data, skill_id):
 
         days_difference = (date_obj - student_initial_assessment_date).days
         adjusted_age = student_initial_age + (days_difference / 365.25)
+
+        # Ensure ages are always ascending and never duplicated
+        if student_ages and adjusted_age <= student_ages[-1]:
+            adjusted_age = student_ages[-1] + default_age_bump_between_tests
+
         student_ages.append(adjusted_age)
 
     logging.info("Loaded %s values and the first looks like: %s", len(skill_values), skill_values[0])
 
-    # Combine skill_values and student_ages into a list of dictionaries
     combined_data = [{"skill_value": skill_value, "student_age": student_age} for skill_value, student_age in zip(skill_values, student_ages)]
     return combined_data
 
