@@ -104,6 +104,10 @@ def get_average_skill(skill_id):
     if not all_skill_values:
         return jsonify({"error": "Skill not found"}), 404
 
+    # Check for the number of unique values in the input arrays
+    if len(set(all_student_ages)) <= 1 or len(set(all_skill_values)) <= 1:
+        return jsonify({"error": "Not enough unique data points to calculate a trend line"}), 400
+
     # Calculate the best fit line's slope, intercept, and other values
     slope, intercept, r_value, p_value, std_err = linregress(all_student_ages, all_skill_values)
 
@@ -111,6 +115,27 @@ def get_average_skill(skill_id):
     skill_average_cache[skill_id] = {"slope": slope, "intercept": intercept, "r_value": r_value, "p_value": p_value, "std_err": std_err}
 
     return jsonify(skill_average_cache[skill_id])
+
+
+@app.route('/all_skill_values/<string:skill_id>', methods=['GET'])
+def get_all_skill_values(skill_id):
+    unique_students = data['StudentId'].unique()
+    all_student_ages = []
+    all_skill_values = []
+
+    for student_id in unique_students:
+        student_data = data[data['StudentId'] == student_id]
+        student_skill_data = aggregate_skills(student_data, skill_id)
+
+        for skill_data in student_skill_data:
+            all_student_ages.append(skill_data['student_age'])
+            all_skill_values.append(skill_data['skill_value'])
+
+    if not all_skill_values:
+        return jsonify({"error": "Skill not found"}), 404
+
+    return jsonify(all_skill_values)
+
 
 # Sanity checker and health check
 @app.route("/hello")
