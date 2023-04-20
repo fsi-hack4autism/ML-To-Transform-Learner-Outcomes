@@ -13,11 +13,7 @@ const skillIds = {
 };
 
 const baseUrl = 'https://backend-student-status.azurewebsites.net';
-async function fetchData(studentId, skillLetter) {
-    const studentData = await $.get(`${baseUrl}/student/${studentId}/skill/${skillLetter}`);
-    const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
-    return {studentData, averageData};
-}
+
 function createGraphCard(skillLetter, skillName) {
     const graphId = `graph-${skillLetter}`;
     const card = $(`<div class="card"><h4>${skillName}</h4><div id="${graphId}"></div></div>`);
@@ -29,8 +25,8 @@ async function fetchAndUpdateStudentData(studentId, skillLetter, graphId) {
 }
 
 async function fetchAndUpdateAverageData(skillLetter, graphId) {
-    const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
-    updateGraph(graphId, averageData, 'Average');
+    // const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
+    // updateGraph(graphId, averageData, 'Average');
 }
 
 function updateGraph(graphId, scores, traceName) {
