@@ -7,7 +7,9 @@ const skillIds = {
     F: "Requests (Mands)",
     G: "Labeling (Tacts)",
     H: "Intraverbals",
-    I: "Spontaneous Vocalizations"
+    I: "Spontaneous Vocalizations",
+    J: "Syntax and Grammar",
+    K: "Play/Leisure Skills"
 };
 
 const baseUrl = 'https://backend-student-status.azurewebsites.net';
