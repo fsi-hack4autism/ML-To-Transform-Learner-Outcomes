@@ -3,6 +3,7 @@ from flask import Flask, jsonify
 import zipfile
 import logging
 import re
+import numpy as np
 
 app = Flask(__name__)
 
@@ -19,8 +20,13 @@ def aggregate_skills(student_data, skill_id):
     pattern = re.compile(f"^{skill_id}\d{{0,3}}$")
     skill_columns = [col for col in student_data.columns if pattern.match(col)]
     skill_values = student_data[skill_columns].sum(axis=1).tolist()
+    student_ages = student_data['StudentAgeAtAssesment'].tolist()
     logging.info("Loaded %s values and the first looks like: %s", len(skill_values), skill_values[0])
-    return skill_values
+
+    # Combine skill_values and student_ages into a list of dictionaries
+    combined_data = [{"skill_value": skill_value, "student_age": student_age} for skill_value, student_age in zip(skill_values, student_ages)]
+    return combined_data
+
 
 @app.route('/student/<string:student_id>/skill/<string:skill_id>')
 def get_student_skill(student_id, skill_id):
@@ -38,6 +44,8 @@ def get_student_skill(student_id, skill_id):
 # Initialize cache dictionary
 skill_average_cache = {}
 
+import numpy as np
+
 @app.route('/average_skill/<string:skill_id>', methods=['GET'])
 def get_average_skill(skill_id):
     # Check if the skill_id is already cached
@@ -45,30 +53,28 @@ def get_average_skill(skill_id):
         return jsonify(skill_average_cache[skill_id])
 
     unique_students = data['StudentId'].unique()
-    skill_sums = {}
-    skill_counts = {}
+    all_student_ages = []
+    all_skill_values = []
 
     for student_id in unique_students:
         student_data = data[data['StudentId'] == student_id]
-        student_skill_values = aggregate_skills(student_data, skill_id)
+        student_skill_data = aggregate_skills(student_data, skill_id)
 
-        for i, skill_value in enumerate(student_skill_values):
-            if i not in skill_sums:
-                skill_sums[i] = 0
-                skill_counts[i] = 0
+        for skill_data in student_skill_data:
+            all_student_ages.append(skill_data['student_age'])
+            all_skill_values.append(skill_data['skill_value'])
 
-            skill_sums[i] += skill_value
-            skill_counts[i] += 1
-
-    if not skill_sums:
+    if not all_skill_values:
         return jsonify({"error": "Skill not found"}), 404
 
-    average_skill_values = [skill_sums[i] / skill_counts[i] for i in skill_sums]
+    # Calculate the best fit line's slope and intercept
+    slope, intercept = np.polyfit(all_student_ages, all_skill_values, 1)
 
-    # Store the calculated average skill values in cache
-    skill_average_cache[skill_id] = average_skill_values
+    # Store the calculated slope and intercept in cache
+    skill_average_cache[skill_id] = {"slope": slope, "intercept": intercept}
 
-    return jsonify(average_skill_values)
+    return jsonify(skill_average_cache[skill_id])
+
 
 
 
