@@ -27,11 +27,13 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          ls .
+          ls -l | wc -l
       
       - name: Install dependencies
         working-directory: webapp/backend
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          ls -l | wc -l
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       
@@ -42,7 +44,8 @@ jobs:
           path: |
             webapp/backend/*
             joinedData_assessmentStudentAssessor3_clean Anonymized.zip
-            webapp/backend/!venv/
+            !webapp/backend/venv/
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
   deploy:
     runs-on: ubuntu-latest
