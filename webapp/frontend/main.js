@@ -5,23 +5,31 @@ const skillIds = {
 };
 
 const baseUrl = 'https://backend-student-status.azurewebsites.net';
-
-function fetchData(studentId, skillLetter) {
-    return $.get(`${baseUrl}/student/${studentId}/skill/${skillLetter}`);
+async function fetchData(studentId, skillLetter) {
+    const studentData = await $.get(`${baseUrl}/student/${studentId}/skill/${skillLetter}`);
+    const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
+    return {studentData, averageData};
 }
 
-function createGraphCard(skillLetter, skillName, scores) {
+function createGraphCard(skillLetter, skillName, studentScores, averageScores) {
     const graphId = `graph-${skillLetter}`;
     const card = $(`<div class="card"><div id="${graphId}"></div></div>`);
 
     const cardsContainer = $('#cards-container');
     cardsContainer.append(card);
 
-    const trace = {
-        x: scores.map((_, i) => i + 1),
-        y: scores,
+    const studentTrace = {
+        x: studentScores.map((_, i) => i + 1),
+        y: studentScores,
         mode: 'lines',
-        name: skillName
+        name: 'Student'
+    };
+
+    const averageTrace = {
+        x: averageScores.map((_, i) => i + 1),
+        y: averageScores,
+        mode: 'lines',
+        name: 'Average'
     };
 
     const layout = {
@@ -31,7 +39,7 @@ function createGraphCard(skillLetter, skillName, scores) {
     };
 
     if (typeof Plotly !== 'undefined') {
-        Plotly.newPlot(graphId, [trace], layout);
+        Plotly.newPlot(graphId, [studentTrace, averageTrace], layout);
     } else {
         console.error("Plotly is not loaded.");
     }
@@ -39,19 +47,19 @@ function createGraphCard(skillLetter, skillName, scores) {
     return card;
 }
 
-function updateWelcomeMessage(studentId) {
-    const welcomeMessage = $(`#welcome-message`);
-    welcomeMessage.text(`Welcome, Student ${studentId}`);
-}
-
 async function updateGraphs(studentId) {
     const cardsContainer = $('#cards-container');
     cardsContainer.empty();
     for (const [skillLetter, skillName] of Object.entries(skillIds)) {
-        const scores = await fetchData(studentId, skillLetter);
-        const card = createGraphCard(skillLetter, skillName, scores);
+        const {studentData, averageData} = await fetchData(studentId, skillLetter);
+        const card = createGraphCard(skillLetter, skillName, studentData, averageData);
         cardsContainer.append(card);
     }
+}
+
+function updateWelcomeMessage(studentId) {
+    const welcomeMessage = $(`#welcome-message`);
+    welcomeMessage.text(`Welcome, Student ${studentId}`);
 }
 
 $(document).ready(function () {
