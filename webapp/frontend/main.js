@@ -36,14 +36,13 @@ function updateWelcomeMessage(studentId) {
     welcomeMessage.text(`Welcome, Student ${studentId}`);
 }
 
-function updateGraphs(studentId) {
+async function updateGraphs(studentId) {
     const cardsContainer = $('#cards-container');
     cardsContainer.empty();
     for (const [skillLetter, skillName] of Object.entries(skillIds)) {
-        fetchData(studentId, skillLetter).then(scores => {
-            const card = createGraphCard(skillLetter, skillName, scores);
-            cardsContainer.append(card);
-        });
+        const scores = await fetchData(studentId, skillLetter);
+        const card = createGraphCard(skillLetter, skillName, scores);
+        cardsContainer.append(card);
     }
 }
 
