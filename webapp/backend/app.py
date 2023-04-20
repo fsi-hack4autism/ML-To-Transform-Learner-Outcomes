@@ -2,6 +2,7 @@ import pandas as pd
 from flask import Flask, jsonify
 import zipfile
 import logging
+import re
 
 app = Flask(__name__)
 
@@ -15,7 +16,8 @@ with zipfile.ZipFile(zip_filename, 'r') as zf:
         data = pd.read_csv(f)
 
 def aggregate_skills(student_data, skill_id):
-    skill_columns = [col for col in student_data.columns if col.startswith(skill_id)]
+    pattern = re.compile(f"^{skill_id}\d{{0,3}}$")
+    skill_columns = [col for col in student_data.columns if pattern.match(col)]
     skill_values = student_data[skill_columns].values.tolist()
     logging.info("Loaded %s values and the first looks like: %s", len(skill_values), skill_values[0])
     return skill_values
