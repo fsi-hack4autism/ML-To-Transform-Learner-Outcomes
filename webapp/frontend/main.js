@@ -56,11 +56,14 @@ function createGraphCard(skillLetter, skillName, studentScores, averageScores) {
 async function updateGraphs(studentId) {
     const cardsContainer = $('#cards-container');
     cardsContainer.empty();
-    for (const [skillLetter, skillName] of Object.entries(skillIds)) {
+
+    const skillPromises = Object.entries(skillIds).map(async ([skillLetter, skillName]) => {
         const {studentData, averageData} = await fetchData(studentId, skillLetter);
-        const card = createGraphCard(skillLetter, skillName, studentData, averageData);
-        cardsContainer.append(card);
-    }
+        return createGraphCard(skillLetter, skillName, studentData, averageData);
+    });
+
+    const cards = await Promise.all(skillPromises);
+    cards.forEach(card => cardsContainer.append(card));
 }
 
 function updateWelcomeMessage(studentId) {
