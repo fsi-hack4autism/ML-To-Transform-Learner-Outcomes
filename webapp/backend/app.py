@@ -35,8 +35,15 @@ def get_student_skill(student_id, skill_id):
 
     return jsonify(skill_values)
 
+# Initialize cache dictionary
+skill_average_cache = {}
+
 @app.route('/average_skill/<string:skill_id>', methods=['GET'])
 def get_average_skill(skill_id):
+    # Check if the skill_id is already cached
+    if skill_id in skill_average_cache:
+        return jsonify(skill_average_cache[skill_id])
+
     unique_students = data['StudentId'].unique()
     skill_sums = {}
     skill_counts = {}
@@ -57,6 +64,9 @@ def get_average_skill(skill_id):
         return jsonify({"error": "Skill not found"}), 404
 
     average_skill_values = [skill_sums[i] / skill_counts[i] for i in skill_sums]
+
+    # Store the calculated average skill values in cache
+    skill_average_cache[skill_id] = average_skill_values
 
     return jsonify(average_skill_values)
 
