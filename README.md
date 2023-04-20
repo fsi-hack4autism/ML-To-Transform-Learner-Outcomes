@@ -47,6 +47,9 @@ Some sample problem statements are provided below that you can adopt as the obje
 * Peter Shand,	Tech Lead
 
 ## Zoom room
-zoom id: 885 589 4024
- 
-passcode: 835407
+Join Zoom Meeting
+https://morganstanley.zoom.us/j/5293623419
+
+One tap mobile
++13462487799,,5293623419# US (Houston)
++16694449171,,5293623419# US
