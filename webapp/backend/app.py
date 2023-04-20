@@ -12,12 +12,10 @@ app = Flask(__name__)
 # Unzip and load the dataset
 zip_filename = 'joinedData_assessmentStudentAssessor3_clean Anonymized.zip'
 csv_filename = 'joinedData_assessmentStudentAssessor3_clean Anonymized.csv'
-default_age_bump_between_tests = .01
 
 with zipfile.ZipFile(zip_filename, 'r') as zf:
     with zf.open(csv_filename) as f:
         data = pd.read_csv(f)
-
 def aggregate_skills(student_data, skill_id):
     default_age_bump_between_tests = 0.1
 
@@ -37,7 +35,8 @@ def aggregate_skills(student_data, skill_id):
             return []
 
     student_ages = []
-    for assessment_date in student_data['assessmentDate']:
+    filtered_skill_values = []
+    for i, assessment_date in enumerate(student_data['assessmentDate']):
         try:
             date_obj = datetime.strptime(assessment_date, '%m/%d/%Y')
         except (ValueError, TypeError):
@@ -49,6 +48,7 @@ def aggregate_skills(student_data, skill_id):
                 else:
                     adjusted_age = student_initial_age
                 student_ages.append(adjusted_age)
+                filtered_skill_values.append(skill_values[i])
                 continue
 
         days_difference = (date_obj - student_initial_assessment_date).days
@@ -58,12 +58,14 @@ def aggregate_skills(student_data, skill_id):
         if student_ages and adjusted_age <= student_ages[-1]:
             adjusted_age = student_ages[-1] + default_age_bump_between_tests
 
-        student_ages.append(adjusted_age)
+        # Filter out NaN ages
+        if not pd.isna(adjusted_age):
+            student_ages.append(adjusted_age)
+            filtered_skill_values.append(skill_values[i])
 
-    logging.info("Loaded %s values and the first looks like: %s", len(skill_values), skill_values[0])
-
-    combined_data = [{"skill_value": skill_value, "student_age": student_age} for skill_value, student_age in zip(skill_values, student_ages)]
+    combined_data = [{"skill_value": skill_value, "student_age": student_age} for skill_value, student_age in zip(filtered_skill_values, student_ages)]
     return combined_data
+
 
 @app.route('/student/<string:student_id>/skill/<string:skill_id>')
 def get_student_skill(student_id, skill_id):
