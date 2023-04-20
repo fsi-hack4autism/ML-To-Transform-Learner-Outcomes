@@ -14,9 +14,11 @@ const skillIds = {
 
 const baseUrl = 'https://backend-student-status.azurewebsites.net';
 
-function createGraphCard(skillLetter, skillName) {
+function createGraphCard(skillLetter, skillName, cardsContainer) {
     const graphId = `graph-${skillLetter}`;
     const card = $(`<div class="card"><h4>${skillName}</h4><div id="${graphId}"></div></div>`);
+
+    cardsContainer.append(card);
 
     const layout = {
         xaxis: {title: 'Student Age'},
@@ -29,7 +31,7 @@ function createGraphCard(skillLetter, skillName) {
         console.error("Plotly is not loaded.");
     }
 
-    return {card, graphId};
+    return graphId;
 }
 
 async function fetchAndUpdateStudentData(studentId, skillLetter, graphId) {
@@ -68,8 +70,7 @@ async function updateGraphs(studentId) {
     cardsContainer.empty();
 
     for (const [skillLetter, skillName] of Object.entries(skillIds)) {
-        const {card, graphId} = createGraphCard(skillLetter, skillName);
-        cardsContainer.append(card);
+        const graphId = createGraphCard(skillLetter, skillName, cardsContainer);
         fetchAndUpdateStudentData(studentId, skillLetter, graphId);
         fetchAndUpdateAverageData(skillLetter, graphId);
     }

@@ -134,7 +134,7 @@ def get_all_skill_values(skill_id):
     if not all_skill_values:
         return jsonify({"error": "Skill not found"}), 404
 
-    return jsonify(all_skill_values)
+    return jsonify({all_student_ages, all_skill_values})
 
 
 # Sanity checker and health check
