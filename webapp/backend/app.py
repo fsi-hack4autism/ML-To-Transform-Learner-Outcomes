@@ -18,6 +18,9 @@ with zipfile.ZipFile(zip_filename, 'r') as zf:
         data = pd.read_csv(f)
         
 def aggregate_skills(student_data, skill_id):
+    # Sort student_data by AssessmentId
+    student_data = student_data.sort_values(by='AssessmentId')
+
     pattern = re.compile(f"^{skill_id}\d{{0,3}}$")
     skill_columns = [col for col in student_data.columns if pattern.match(col)]
     skill_values = student_data[skill_columns].sum(axis=1).tolist()
@@ -28,21 +31,19 @@ def aggregate_skills(student_data, skill_id):
     
     try:
         student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%m/%d/%Y')
-    except ValueError:
+    except (ValueError, TypeError):
         student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%Y-%m-%d')
 
-    # Sort student_data by AssessmentId
-    student_data = student_data.sort_values(by='AssessmentId')
 
     # Calculate student_age for each row based on assessmentDate
     student_ages = []
     for assessment_date in student_data['assessmentDate']:
         try:
             date_obj = datetime.strptime(assessment_date, '%m/%d/%Y')
-        except ValueError:
+        except (ValueError, TypeError):
             try:
                 date_obj = datetime.strptime(assessment_date, '%Y-%m-%d')
-            except ValueError:
+            except (ValueError, TypeError):
                 # If the date is not parseable, take the previous student_age and add .1
                 if student_ages:
                     adjusted_age = student_ages[-1] + 0.1
