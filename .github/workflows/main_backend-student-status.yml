@@ -40,9 +40,9 @@ jobs:
         with:
           name: python-app
           path: |
-            webapp/backend
+            webapp/backend/*
             joinedData_assessmentStudentAssessor3_clean Anonymized.zip
-            !venv/
+            webapp/backend/!venv/
 
   deploy:
     runs-on: ubuntu-latest
