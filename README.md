@@ -48,6 +48,7 @@ https://jolly-desert-01b5c5610.3.azurestaticapps.net/
 * Adam Pryce, Project Mgmt, DevOps, and Web Stack
 * Halaa Menasy,	Tech Lead
 * Peter Shand,	Tech Lead
+* Hanen Bondka, Shyam Sundar, Parvesh Mamgain -  Data Munging
 
 ## Zoom room
 Join Zoom Meeting
