@@ -21,6 +21,7 @@ function createGraphCard(skillLetter, skillName, cardsContainer) {
     cardsContainer.append(card);
 
     const layout = {
+        width: 500,
         xaxis: {title: 'Student Age'},
         yaxis: {title: 'Score'}
     };
@@ -53,6 +54,7 @@ function updateGraph(graphId, scores, traceName) {
     };
 
     const layout = {
+        width: 500,
         xaxis: {title: 'Student Age'},
         yaxis: {title: 'Score'}
     };

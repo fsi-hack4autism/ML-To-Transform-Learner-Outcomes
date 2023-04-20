@@ -12,6 +12,7 @@ app = Flask(__name__)
 # Unzip and load the dataset
 zip_filename = 'joinedData_assessmentStudentAssessor3_clean Anonymized.zip'
 csv_filename = 'joinedData_assessmentStudentAssessor3_clean Anonymized.csv'
+default_age_bump_between_tests = .25
 
 with zipfile.ZipFile(zip_filename, 'r') as zf:
     with zf.open(csv_filename) as f:
@@ -48,7 +49,7 @@ def aggregate_skills(student_data, skill_id):
             except (ValueError, TypeError):
                 # If the date is not parseable, take the previous student_age and add .1
                 if student_ages:
-                    adjusted_age = student_ages[-1] + 0.1
+                    adjusted_age = student_ages[-1] + default_age_bump_between_tests
                 else:
                     adjusted_age = student_initial_age
                 student_ages.append(adjusted_age)
