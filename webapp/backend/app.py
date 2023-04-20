@@ -4,6 +4,7 @@ import zipfile
 import logging
 import re
 import numpy as np
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -20,13 +21,25 @@ def aggregate_skills(student_data, skill_id):
     pattern = re.compile(f"^{skill_id}\d{{0,3}}$")
     skill_columns = [col for col in student_data.columns if pattern.match(col)]
     skill_values = student_data[skill_columns].sum(axis=1).tolist()
-    student_ages = student_data['StudentAgeAtAssesment'].tolist()
+
+    # Get the row where FirstAssessment_byStudent is 1
+    initial_assessment_row = student_data[student_data['FirstAssessment_byStudent'] == 1].iloc[0]
+    student_initial_age = initial_assessment_row['StudentAgeAtAssesment']
+    student_initial_assessment_date = datetime.strptime(initial_assessment_row['assessmentDate'], '%Y-%m-%d')
+
+    # Calculate student_age for each row based on assessmentDate
+    student_ages = []
+    for assessment_date in student_data['assessmentDate']:
+        date_obj = datetime.strptime(assessment_date, '%Y-%m-%d')
+        days_difference = (date_obj - student_initial_assessment_date).days
+        adjusted_age = student_initial_age + (days_difference / 365.25)
+        student_ages.append(adjusted_age)
+
     logging.info("Loaded %s values and the first looks like: %s", len(skill_values), skill_values[0])
 
     # Combine skill_values and student_ages into a list of dictionaries
     combined_data = [{"skill_value": skill_value, "student_age": student_age} for skill_value, student_age in zip(skill_values, student_ages)]
     return combined_data
-
 
 @app.route('/student/<string:student_id>/skill/<string:skill_id>')
 def get_student_skill(student_id, skill_id):
