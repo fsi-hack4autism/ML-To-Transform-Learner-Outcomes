@@ -41,8 +41,22 @@ async function fetchAndUpdateStudentData(studentId, skillLetter, graphId) {
 }
 
 async function fetchAndUpdateAverageData(skillLetter, graphId) {
-    // const averageData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
-    // updateGraph(graphId, averageData, 'Average');
+    const regressionData = await $.get(`${baseUrl}/average_skill/${skillLetter}`);
+    const minAge = 0; // you can set this to the minimum age you expect in the data
+    const maxAge = 20; // you can set this to the maximum age you expect in the data
+    const averageData = generateAverageData(regressionData, minAge, maxAge);
+    updateGraph(graphId, averageData, 'Average');
+}
+
+function generateAverageData(regressionData, minAge, maxAge) {
+    const { intercept, slope } = regressionData;
+    const ages = [minAge, maxAge];
+    const skillValues = ages.map(age => intercept + slope * age);
+
+    return ages.map((age, index) => ({
+        student_age: age,
+        skill_value: skillValues[index]
+    }));
 }
 
 function updateGraph(graphId, scores, traceName) {
